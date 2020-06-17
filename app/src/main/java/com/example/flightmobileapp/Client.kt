@@ -1,17 +1,14 @@
 package com.example.flightmobileapp
 
 import Api
-import android.R
-import android.app.ProgressDialog
+import android.content.Context
 import android.graphics.BitmapFactory
-import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
-import kotlinx.android.synthetic.main.activity_flight_app.*
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -22,7 +19,14 @@ import java.io.IOException
 
 
 class Client {
+    private val handler = Handler()
+    var toastDuration = 4000
+    var context: Context? = null
+    constructor(context: Context) {
+        this.context = context
+    }
     fun sendControlsValues(aileron: Float, elevator:Float, rudder: Float, throttle: Float) {
+        Toast.makeText(context, "Communication Error! please press back to return to main menu", Toast.LENGTH_LONG).show()
         val url = "http://10.0.2.2:59754/"
         val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(url)
@@ -44,11 +48,11 @@ class Client {
                 }
             }
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                Toast.makeText(context, "Communication Error! please press back to return to main menu", toastDuration).show()
             }
         })
     }
     fun getImage(v: ImageView) {
-        val handler = Handler()
         //add this task to the handler loop every 2 seconds to update the view
         //at the end of the task we re-add the task to the queue to work endlessly
         handler.postDelayed(object : Runnable{
@@ -72,9 +76,13 @@ class Client {
                     }
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                         TODO("Not yet implemented")
+                        Toast.makeText(context, "Communication Error! please press back to return to main menu", toastDuration).show()
                     }
                 })
             }
         },2000)
+    }
+    fun stopClient() {
+        handler.removeCallbacksAndMessages(null);
     }
 }
