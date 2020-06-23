@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
+import android.widget.SeekBar
 import kotlinx.android.synthetic.main.activity_flight_app.*
 import okhttp3.*
 import java.io.IOException
@@ -14,7 +15,7 @@ import kotlin.math.sqrt
 import kotlin.coroutines.*
 class FlightAppActivity : AppCompatActivity() {
     private var isTouchingJoystick: Boolean = false
-    private var client = Client()
+    private var client = Client(this)
     var oldAileron: Float = 0F; private set
     var oldElevator: Float = 0F; private set
     var oldRudder: Float = 0F; private set
@@ -24,6 +25,7 @@ class FlightAppActivity : AppCompatActivity() {
         setContentView(R.layout.activity_flight_app)
         client.getImage(simulatorScreen)
         setJoystickListeners()
+        setSeekBarListeners()
     }
     fun setJoystickListeners() {
         joystick.setOnTouchListener(object : View.OnTouchListener {
@@ -82,8 +84,6 @@ class FlightAppActivity : AppCompatActivity() {
             }
         })
         }
-
-
     private fun isInsideJoystick(touchX: Float, touchY: Float): Boolean {
         return this.distance(touchX, touchY, joystick.currX, joystick.currY) <= joystick.innerRadius
     }
@@ -105,7 +105,6 @@ class FlightAppActivity : AppCompatActivity() {
         val newY = joystick.centerY + sin(Math.toRadians(angle)) * (joystick.outerRadius - joystick.innerRadius)
         return arrayOf(newX.toFloat(), newY.toFloat())
     }
-
     private fun updateJoystickPosition(newX: Float, newY: Float) {
         joystick.currX = newX
         joystick.currY = newY
@@ -116,5 +115,32 @@ class FlightAppActivity : AppCompatActivity() {
             oldAileron = aileron;
             oldElevator = elevator;
         }
+    }
+    private fun setSeekBarListeners() {
+        rudderSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                val rudder = progress.toFloat()/100;
+                //all changes will be bigger then 1% off the value, no need to check.
+                client.sendControlsValues(oldAileron, oldElevator, rudder, oldThrottle);
+                oldRudder = rudder
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar) {}
+        })
+        throttleSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                //all changes will be bigger then 1% off the value, no need to check.
+                val throttle = progress.toFloat()/100;
+                client.sendControlsValues(oldAileron, oldElevator, oldRudder, throttle);
+                oldThrottle = throttle
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar) {}
+        })
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        client.stopClient()
     }
 }

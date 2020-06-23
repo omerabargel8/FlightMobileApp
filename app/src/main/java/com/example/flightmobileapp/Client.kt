@@ -26,7 +26,7 @@ class Client {
         this.context = context
     }
     fun sendControlsValues(aileron: Float, elevator:Float, rudder: Float, throttle: Float) {
-        Toast.makeText(context, "Communication Error! please press back to return to main menu", Toast.LENGTH_LONG).show()
+        //Toast.makeText(context, "Communication Error! please press back to return to main menu", Toast.LENGTH_LONG).show()
         val url = "http://10.0.2.2:59754/"
         val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(url)
@@ -70,9 +70,7 @@ class Client {
                     override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                         val bstream = response?.body()?.byteStream()
                         val bMap = BitmapFactory.decodeStream(bstream)
-                        //runOnUiThread {
                         v.setImageBitmap(bMap)
-                        //}
                     }
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                         TODO("Not yet implemented")
