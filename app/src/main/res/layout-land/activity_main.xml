@@ -38,7 +38,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <Button
-            android:id="@+id/button6"
+            android:id="@+id/url1"
             android:layout_width="250dp"
             android:layout_height="80dp"
             android:layout_marginStart="44dp"
@@ -46,13 +46,13 @@
             android:layout_marginEnd="24dp"
             android:background="#ECC07F"
             android:text="Button"
-            app:layout_constraintEnd_toStartOf="@+id/button9"
+            app:layout_constraintEnd_toStartOf="@+id/url3"
             app:layout_constraintHorizontal_bias="0.957"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/button7"
+            android:id="@+id/url2"
             android:layout_width="250dp"
             android:layout_height="80dp"
             android:layout_marginStart="44dp"
@@ -60,15 +60,15 @@
             android:layout_marginEnd="16dp"
             android:background="#ECC07F"
             android:text="Button"
-            app:layout_constraintBottom_toTopOf="@+id/button11"
-            app:layout_constraintEnd_toStartOf="@+id/button10"
+            app:layout_constraintBottom_toTopOf="@+id/url5"
+            app:layout_constraintEnd_toStartOf="@+id/url4"
             app:layout_constraintHorizontal_bias="0.818"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button6"
+            app:layout_constraintTop_toBottomOf="@+id/url1"
             app:layout_constraintVertical_bias="0.0" />
 
         <Button
-            android:id="@+id/button9"
+            android:id="@+id/url3"
             android:layout_width="250dp"
             android:layout_height="80dp"
             android:layout_marginTop="16dp"
@@ -79,7 +79,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/button10"
+            android:id="@+id/url4"
             android:layout_width="250dp"
             android:layout_height="80dp"
             android:layout_marginTop="24dp"
@@ -87,10 +87,10 @@
             android:background="#ECC07F"
             android:text="Button"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button9" />
+            app:layout_constraintTop_toBottomOf="@+id/url3" />
 
         <Button
-            android:id="@+id/button11"
+            android:id="@+id/url5"
             android:layout_width="250dp"
             android:layout_height="80dp"
             android:layout_marginStart="8dp"
@@ -103,7 +103,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button10"
+            app:layout_constraintTop_toBottomOf="@+id/url4"
             app:layout_constraintVertical_bias="1.0" />
 
         <androidx.constraintlayout.widget.Guideline
