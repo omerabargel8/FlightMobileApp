@@ -15,6 +15,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
     private var db: HostDatabase? = null
@@ -37,22 +38,27 @@ class MainActivity : AppCompatActivity() {
     fun connectButtonOnClick(view: View) {
         val url:String = urlTextEdit.text.toString()
         updateUrl(url)
-        val gson = GsonBuilder()
-            .setLenient()
-            .create()
-        val retrofit = Retrofit.Builder()
-            .baseUrl(url)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build()
-        val api = retrofit.create(Api::class.java)
-        val body = api.getImg().enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                openFlightAppActivity()
-            }
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Toast.makeText(this@MainActivity,"Communication Failure! please try again later or use different URL", Toast.LENGTH_SHORT).show()
-            }
-        })
+        try {
+
+            val gson = GsonBuilder()
+                .setLenient()
+                .create()
+            val retrofit = Retrofit.Builder()
+                .baseUrl(url)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build()
+            val api = retrofit.create(Api::class.java)
+            val body = api.getImg().enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    openFlightAppActivity()
+                }
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    Toast.makeText(this@MainActivity,"Communication Failure! please try again later or use different URL", Toast.LENGTH_SHORT).show()
+                }
+            })
+        } catch (e:Exception) {
+            Toast.makeText(this@MainActivity,"Communication Failure! please try again later or use different URL", Toast.LENGTH_SHORT).show()
+        }
     }
     fun openFlightAppActivity() {
         val intent = Intent(this, FlightAppActivity::class.java)
@@ -72,6 +78,8 @@ class MainActivity : AppCompatActivity() {
         val hostList : List<Host>? =  hostViewModel?.getAllHosts(hostDao)
         if (hostList != null) {
             size = hostList.size
+            if(size > 5)
+                size = 5;
             for (i in 0..(size-1)) {
                 buttonManager[i].text = hostList[i].url
             }
