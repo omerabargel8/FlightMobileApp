@@ -4,7 +4,6 @@ import Api
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.os.Handler
-import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
 import com.google.gson.GsonBuilder
@@ -15,7 +14,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.IOException
 
 
 class Client {
@@ -25,9 +23,7 @@ class Client {
     constructor(context: Context) {
         this.context = context
     }
-    fun sendControlsValues(aileron: Float, elevator:Float, rudder: Float, throttle: Float) {
-        //Toast.makeText(context, "Communication Error! please press back to return to main menu", Toast.LENGTH_LONG).show()
-        val url = "http://10.0.2.2:59754/"
+    fun sendControlsValues(url :String, aileron: Float, elevator:Float, rudder: Float, throttle: Float) {
         val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(url)
             .addConverterFactory(GsonConverterFactory.create())
@@ -41,18 +37,16 @@ class Client {
         val call = service.postData(jsonObject)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                try {
-                    Log.d("FlightMobileApp", response.body().toString())
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
+
+                if (response.code() != 200)
+                    Toast.makeText(context, "Communication Error! please press back to return to main menu", toastDuration).show()
             }
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 Toast.makeText(context, "Communication Error! please press back to return to main menu", toastDuration).show()
             }
         })
     }
-    fun getImage(v: ImageView) {
+    fun getImage(v: ImageView, url:String) {
         //add this task to the handler loop every 2 seconds to update the view
         //at the end of the task we re-add the task to the queue to work endlessly
         handler.postDelayed(object : Runnable{
@@ -62,18 +56,20 @@ class Client {
                     .setLenient()
                     .create()
                 val retrofit = Retrofit.Builder()
-                    .baseUrl("http://10.0.2.2:59754/")
+                    .baseUrl(url)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build()
                 val api = retrofit.create(Api::class.java)
                 val body = api.getImg().enqueue(object : Callback<ResponseBody> {
                     override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                        val bstream = response?.body()?.byteStream()
-                        val bMap = BitmapFactory.decodeStream(bstream)
-                        v.setImageBitmap(bMap)
+                        if (response.code() == 200) {
+                            val bstream = response?.body()?.byteStream()
+                            val bMap = BitmapFactory.decodeStream(bstream)
+                            v.setImageBitmap(bMap)
+                        } else
+                            Toast.makeText(context, "Communication Error! please press back to return to main menu", toastDuration).show()
                     }
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                        TODO("Not yet implemented")
                         Toast.makeText(context, "Communication Error! please press back to return to main menu", toastDuration).show()
                     }
                 })

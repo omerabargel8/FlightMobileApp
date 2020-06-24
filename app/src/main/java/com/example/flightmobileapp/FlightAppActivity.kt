@@ -20,10 +20,12 @@ class FlightAppActivity : AppCompatActivity() {
     var oldElevator: Float = 0F; private set
     var oldRudder: Float = 0F; private set
     var oldThrottle: Float = 0F; private set
+    var url :String = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_flight_app)
-        client.getImage(simulatorScreen)
+        url = intent.getStringExtra("url").toString()
+        client.getImage(simulatorScreen, url)
         setJoystickListeners()
         setSeekBarListeners()
     }
@@ -63,8 +65,6 @@ class FlightAppActivity : AppCompatActivity() {
                         )
                         val elevator: Float = (sin(Math.toRadians(angle)) * magnitude * -1).toFloat()
                         val aileron: Float = (cos(Math.toRadians(angle)) * magnitude).toFloat()
-                        //this.client.sendCommand("elevator", elevator.toString())
-                        //this.client.sendCommand("aileron", aileron.toString())
                         // draw the new position
                         val newPos = getAdjustedPosition(touchX, touchY, angle, distance)
                         updateJoystickPosition(newPos[0], newPos[1])
@@ -111,7 +111,7 @@ class FlightAppActivity : AppCompatActivity() {
     }
     private fun filtrateInsufficientMoment(elevator: Float, aileron: Float) {
         if (oldAileron * 1.01 < aileron || oldAileron * 0.99 > aileron || oldElevator * 1.01 < elevator || oldElevator * 0.99 > elevator) {
-            client.sendControlsValues(aileron, elevator, oldRudder, oldThrottle);
+            client.sendControlsValues(url, aileron, elevator, oldRudder, oldThrottle);
             oldAileron = aileron;
             oldElevator = elevator;
         }
@@ -121,7 +121,7 @@ class FlightAppActivity : AppCompatActivity() {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 val rudder = progress.toFloat()/100;
                 //all changes will be bigger then 1% off the value, no need to check.
-                client.sendControlsValues(oldAileron, oldElevator, rudder, oldThrottle);
+                client.sendControlsValues(url, oldAileron, oldElevator, rudder, oldThrottle);
                 oldRudder = rudder
             }
             override fun onStartTrackingTouch(seekBar: SeekBar) {}
@@ -131,7 +131,7 @@ class FlightAppActivity : AppCompatActivity() {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 //all changes will be bigger then 1% off the value, no need to check.
                 val throttle = progress.toFloat()/100;
-                client.sendControlsValues(oldAileron, oldElevator, oldRudder, throttle);
+                client.sendControlsValues(url, oldAileron, oldElevator, oldRudder, throttle);
                 oldThrottle = throttle
             }
             override fun onStartTrackingTouch(seekBar: SeekBar) {}

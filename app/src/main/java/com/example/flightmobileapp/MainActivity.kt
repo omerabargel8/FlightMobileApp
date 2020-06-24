@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
             val api = retrofit.create(Api::class.java)
             val body = api.getImg().enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    openFlightAppActivity()
+                    openFlightAppActivity(url)
                 }
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     Toast.makeText(this@MainActivity,"Communication Failure! please try again later or use different URL", Toast.LENGTH_SHORT).show()
@@ -60,8 +60,9 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this@MainActivity,"Communication Failure! please try again later or use different URL", Toast.LENGTH_SHORT).show()
         }
     }
-    fun openFlightAppActivity() {
+    fun openFlightAppActivity(url:String) {
         val intent = Intent(this, FlightAppActivity::class.java)
+        intent.putExtra("url", url);
         startActivity(intent)
         //val intent = Intent(this, JoystickActivity::class.java)
         //startActivity(intent)
