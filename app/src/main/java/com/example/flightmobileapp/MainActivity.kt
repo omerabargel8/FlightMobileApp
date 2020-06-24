@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
         db = HostDatabase.getDB(this)
         hostDao = db?.hostDao()
         hostViewModel = ViewModelProvider(this).get(HostViewModel::class.java)
+        hostViewModel?.resetDB(hostDao);
         updateButtonManager()
         initUrlAddresses()
     }

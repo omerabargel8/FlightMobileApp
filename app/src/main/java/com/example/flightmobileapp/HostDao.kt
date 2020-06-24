@@ -12,4 +12,7 @@ public abstract interface HostDao {
 
     @Query("SELECT * From Hosts ORDER BY connectionTime DESC LIMIT 5")
     fun getAll(): List<Host>?
+
+    @Query("DELETE FROM Hosts")
+    fun clearDB()
 }

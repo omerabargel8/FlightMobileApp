@@ -1,18 +1,18 @@
 package com.example.flightmobileapp
-import android.graphics.BitmapFactory
-import androidx.appcompat.app.AppCompatActivity
+
 import android.os.Bundle
+import android.os.Handler
 import android.view.MotionEvent
 import android.view.View
 import android.widget.SeekBar
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_flight_app.*
-import okhttp3.*
-import java.io.IOException
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
-import kotlin.coroutines.*
+
+
 class FlightAppActivity : AppCompatActivity() {
     private var isTouchingJoystick: Boolean = false
     private var client = Client(this)
@@ -21,6 +21,7 @@ class FlightAppActivity : AppCompatActivity() {
     var oldRudder: Float = 0F; private set
     var oldThrottle: Float = 0F; private set
     var url :String = ""
+    private val handler = Handler()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_flight_app)
@@ -74,6 +75,7 @@ class FlightAppActivity : AppCompatActivity() {
                     MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                         // place both the joystick and the aircraft's steering handles in the center
                         updateJoystickPosition(joystick.centerX, joystick.centerY)
+                        ///startAnimation()
                         //this.client.sendCommand("elevator","0")
                         //this.client.sendCommand("aileron","0")
                         isTouchingJoystick = false
@@ -109,6 +111,32 @@ class FlightAppActivity : AppCompatActivity() {
         joystick.currX = newX
         joystick.currY = newY
     }
+    /**
+    private fun startAnimation() {
+
+        var tempX :Float;
+        var tempY :Float;
+        var check:Boolean = true
+         while (check == true) {
+            tempX = (joystick.currX - joystick.centerX) * 0.95F
+            //joystick.currX = tempX + joystick.centerX
+            tempY = (joystick.currY - joystick.centerY) * 0.95F
+            //joystick.currY = tempY + joystick.centerY
+            updateJoystickPosition(tempX + joystick.centerX, tempY + joystick.centerY)
+            println(Math.abs(tempX))
+            println(Math.abs(tempY))
+            if (Math.abs(tempX) < 0.1F && Math.abs(tempY) < 0.1F) {
+                updateJoystickPosition(joystick.centerX, joystick.centerY)
+                //joystick.currX = joystick.centerX
+                //joystick.currY = joystick.centerY
+                println("##########################")
+                check = false
+                return
+            }
+            Thread.sleep(40)
+        }
+    }
+        */
     private fun filtrateInsufficientMoment(elevator: Float, aileron: Float) {
         if (oldAileron * 1.01 < aileron || oldAileron * 0.99 > aileron || oldElevator * 1.01 < elevator || oldElevator * 0.99 > elevator) {
             client.sendControlsValues(url, aileron, elevator, oldRudder, oldThrottle);
