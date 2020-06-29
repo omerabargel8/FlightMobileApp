@@ -50,7 +50,7 @@ class FlightAppActivity : AppCompatActivity() {
                         }
                         // used to normalize the values
                         val distance = distance(touchX, touchY, joystick.centerX, joystick.centerY)
-                        var magnitude = (distance + joystick.innerRadius) / joystick.outerRadius
+                        var magnitude = (distance + joystick.stickRadius) / joystick.outerCircleRadius
                         if (magnitude >= 1) {
                             magnitude = 1F
                         }
@@ -83,7 +83,7 @@ class FlightAppActivity : AppCompatActivity() {
     }
 
     private fun isInsideJoystick(touchX: Float, touchY: Float): Boolean {
-        return this.distance(touchX, touchY, joystick.currX, joystick.currY) <= joystick.innerRadius
+        return this.distance(touchX, touchY, joystick.currentX, joystick.currentY) <= joystick.stickRadius
     }
 
     private fun distance(x1: Float, y1: Float, x2: Float, y2: Float): Float {
@@ -104,19 +104,19 @@ class FlightAppActivity : AppCompatActivity() {
         angle: Double,
         distanceFromCenter: Float
     ): Array<Float> {
-        if (distanceFromCenter + joystick.innerRadius <= joystick.outerRadius) {
+        if (distanceFromCenter + joystick.stickRadius <= joystick.outerCircleRadius) {
             return arrayOf(touchX, touchY)
         }
         val newX =
-            joystick.centerX + cos(Math.toRadians(angle)) * (joystick.outerRadius - joystick.innerRadius)
+            joystick.centerX + cos(Math.toRadians(angle)) * (joystick.outerCircleRadius - joystick.stickRadius)
         val newY =
-            joystick.centerY + sin(Math.toRadians(angle)) * (joystick.outerRadius - joystick.innerRadius)
+            joystick.centerY + sin(Math.toRadians(angle)) * (joystick.outerCircleRadius - joystick.stickRadius)
         return arrayOf(newX.toFloat(), newY.toFloat())
     }
 
     private fun updateJoystickPosition(newX: Float, newY: Float) {
-        joystick.currX = newX
-        joystick.currY = newY
+        joystick.currentX = newX
+        joystick.currentY = newY
     }
 
     private fun filtrateInsufficientMoment(elevator: Float, aileron: Float) {
