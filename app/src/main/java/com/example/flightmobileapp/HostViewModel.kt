@@ -1,4 +1,5 @@
 package com.example.flightmobileapp
+
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,11 +10,12 @@ class HostViewModel(application: Application) : AndroidViewModel(application) {
     fun insert(host: Host, hostDao: HostDao?) = viewModelScope.launch(Dispatchers.IO) {
         hostDao?.insertHost(host);
     }
+
     fun resetDB(hostDao: HostDao?) = viewModelScope.launch(Dispatchers.IO) {
         hostDao?.clearDB()
     }
 
-    fun getAllHosts(hostDao: HostDao?) : List<Host>? {
+    fun getAllHosts(hostDao: HostDao?): List<Host>? {
         return hostDao?.getAll()
     }
 }

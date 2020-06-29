@@ -7,27 +7,6 @@ import androidx.room.RoomDatabase
 
 @Database(entities = arrayOf(Host::class), version = 1)
 abstract class HostDatabase : RoomDatabase() {
-    /**
-    abstract fun hostDao(): HostDao
-    companion object{
-        @Volatile
-        private  var INSTANCE : HostDatabase? = null
-        fun getDB(context: Context) : HostDatabase {
-            synchronized(this) {
-                var instance: HostDatabase? =
-                    INSTANCE
-                if(instance==null){
-                    instance = Room.databaseBuilder(
-                        context.applicationContext,
-                        HostDatabase::class.java,
-                        "Url_Names"
-                    ).build()
-                }
-                return instance
-            }
-        }
-    }
-    */
     abstract fun hostDao(): HostDao
 
     companion object {

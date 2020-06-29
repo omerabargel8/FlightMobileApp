@@ -20,10 +20,18 @@ class Client {
     private val handler = Handler()
     var toastDuration = 4000
     var context: Context? = null
+
     constructor(context: Context) {
         this.context = context
     }
-    fun sendControlsValues(url :String, aileron: Float, elevator:Float, rudder: Float, throttle: Float) {
+
+    fun sendControlsValues(
+        url: String,
+        aileron: Float,
+        elevator: Float,
+        rudder: Float,
+        throttle: Float
+    ) {
         val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(url)
             .addConverterFactory(GsonConverterFactory.create())
@@ -39,17 +47,27 @@ class Client {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
 
                 if (response.code() != 200)
-                    Toast.makeText(context, "Communication Error! please press back to return to main menu", toastDuration).show()
+                    Toast.makeText(
+                        context,
+                        "Communication Error! please press back to return to main menu",
+                        toastDuration
+                    ).show()
             }
+
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Toast.makeText(context, "Communication Error! please press back to return to main menu", toastDuration).show()
+                Toast.makeText(
+                    context,
+                    "Communication Error! please press back to return to main menu",
+                    toastDuration
+                ).show()
             }
         })
     }
-    fun getImage(v: ImageView, url:String) {
+
+    fun getImage(v: ImageView, url: String) {
         //add this task to the handler loop every 2 seconds to update the view
         //at the end of the task we re-add the task to the queue to work endlessly
-        handler.postDelayed(object : Runnable{
+        handler.postDelayed(object : Runnable {
             override fun run() {
                 handler.postDelayed(this, 2000)
                 val gson = GsonBuilder()
@@ -61,21 +79,34 @@ class Client {
                     .build()
                 val api = retrofit.create(Api::class.java)
                 val body = api.getImg().enqueue(object : Callback<ResponseBody> {
-                    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    override fun onResponse(
+                        call: Call<ResponseBody>,
+                        response: Response<ResponseBody>
+                    ) {
                         if (response.code() == 200) {
                             val bstream = response?.body()?.byteStream()
                             val bMap = BitmapFactory.decodeStream(bstream)
                             v.setImageBitmap(bMap)
                         } else
-                            Toast.makeText(context, "Communication Error! please press back to return to main menu", toastDuration).show()
+                            Toast.makeText(
+                                context,
+                                "Communication Error! please press back to return to main menu",
+                                toastDuration
+                            ).show()
                     }
+
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                        Toast.makeText(context, "Communication Error! please press back to return to main menu", toastDuration).show()
+                        Toast.makeText(
+                            context,
+                            "Communication Error! please press back to return to main menu",
+                            toastDuration
+                        ).show()
                     }
                 })
             }
-        },2000)
+        }, 2000)
     }
+
     fun stopClient() {
         handler.removeCallbacksAndMessages(null);
     }
